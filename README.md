@@ -5,6 +5,7 @@ An exploration into particle graphics.
 
 `./particles`  Runs the simulation.  Change the parameters around lines 84-105 to do other things.
 
+http://www.giphy.com/gifs/26gs62MGkZfTwFMBO
 
 TODO
 ====
