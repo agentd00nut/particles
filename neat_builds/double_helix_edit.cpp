@@ -27,10 +27,7 @@ void perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFa
 }
 
 
-double r_small()
-{
-    return (double)rand() / (double)RAND_MAX ;
-}
+
 
 
 float AU = (800);
@@ -83,30 +80,58 @@ int main(int argc, char** argv)
     t_COLOR thisshit(32,178,170, 255);
 	// GRAVITY INIT
 
-    float magnetism = 10;
-    int trail_length = 1;
-    float timestep = 3;
-    
-    int zoom=-700;
-    
-    float speed_full=1;
+    float magnetism = 1000;
+    int trail_length = 2;
+    float timestep = 1;
+    float accurate_timestep = 1;
 
 
-    bodies.push_back( Body( -100, 0, 2,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 100, 0,  2,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 0, 100,  8,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 0, -100, 8,  0, 0 , 0,   blue, trail_length ));
-   
-    for(int i =0; i < 5000; i++)
+
+    bodies.push_back( Body( 0, -400, 6,    0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 0,   6,     0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 800, 25,     0, 0 , 0,   blue, trail_length ));
+    //bodies.push_back( Body( 00, 200, 10,    0, 0 , 0,   blue, trail_length ));
+    //bodies.push_back( Body( 00, -200, 10,    0, 0 , 0,   blue, trail_length ));
+   // bodies.push_back( Body( 100, 0, 1000,    0, 0 , 0,   blue, trail_length ));
+
+    for(int i =0; i < 10000; i++)
     {
-        
-        //particles.push_back( Body(  (rand()%501-250)+r_small(), rand()%11-5+r_small(), 1,   0,rand()%2-1+r_small(), 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%501-250)+r_small(), r_small(), 1,   0, 0, 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%501-250)+r_small(), -r_small(), 1,   0, 0, 0,   green, trail_length ));
-
+        particles.push_back( Body(  0 -400 , rand()%6000-3000 -4000, .1,  0,3, 0,   green, trail_length ));
+        particles.push_back( Body( 0 +400 , rand()%6000-3000 -4000, .1,  0, 3, 0,   green, trail_length ));
     }
 
+    printf("woo\n");
+
+    //Body a(-1, 1, 5.9742 * pow(10,24),    0,0,0, red,  trail_length); // earth
+    //Body b(, 1, 1.98892 * pow(10,24),    0,0,0, blue, trail_length); // sun
+/*
+    float magnetism = 10;
+    int trail_length = 100000;
+    float timestep = 1;
+    float accurate_timestep = .6;
+    bodies.push_back( Body( -501, 0, .001,    0, 10 , 0,   red, trail_length ));
+    bodies.push_back( Body( -301, 0, .001,    0, 10 , 0,   green, trail_length ));
     
+    bodies.push_back( Body( -400, 0, 1000,    0, 2.5, 0,   white, trail_length ));
+
+
+
+    bodies.push_back( Body( 501, 0, .001,    0, -10 , 0,   salmon, trail_length ));
+    bodies.push_back( Body( 301, 0, .001,    0, -10 , 0,   thisshit, trail_length ));
+    
+    bodies.push_back( Body( 400, 0, 1000,    0, -2.5, 0,   yellow, trail_length ));
+*/
+    //bodies.push_back( Body( 0, 0, 1000,    .01, -.01, 0,   blue, trail_length ));
+    //bodies.push_back( Body(0,     0,  1000000,   0,   0,0, red,  trail_length) );
+    //bodies.push_back( Body(10,     0,  100,   0,   800,0, green,  trail_length) );
+
+    //bodies.push_back( Body(-1*AU, 0, 5.9742*pow(10,24),  0, 29.783 * 1000, 0, red, trail_length) ); // earth
+   // bodies.push_back( Body(1*AU, 0, 5.9742*pow(10,24),  0, 12.783 * 1000, 0, red, trail_length) ); // earth
+    //bodies.push_back( Body(-1*AU+(0.3633*pow(10,6)), 10000, 0.07346*pow(10,24),  0, (29.783 * 1000)+1.022*1000, 0, white, trail_length) ); // moon
+    //bodies.push_back( Body(0, 0, 1.98892*pow(10,30),  0, 0, 0, green, trail_length) ); // sun
+    //bodies.push_back( Body(0.723 * AU, 0, 4.8685*pow(10,24),  0, -35.02 * 1000, 0, green, trail_length) ); // venus
+    //bodies.push_back( Body(-1*AU, 0, 1.98892*pow(10,30),  0, 15.783 * 1000, 0, green, trail_length) ); // sun
+    //bodies.push_back( Body(1*AU, 0, 1.98892*pow(10,30),  0, -15.783 * 1000, 0, red, trail_length) ); // sun
 
 
 
@@ -138,6 +163,8 @@ int running = 1;
 
     int lxM=0, lyM=0;
 
+    int zoom=-1000;
+
     // DRAWING RESET
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);        
         glMatrixMode(GL_MODELVIEW);
@@ -150,9 +177,10 @@ int running = 1;
     float vel=0;
         int r, b, g;
 
+        float speed_full=15;
         float speed_steps=765/speed_full; //765 = 255 * 3
         float speed_color;
-glPointSize(1.2);
+
     while(running){
 
 
@@ -322,6 +350,7 @@ glPointSize(1.2);
                 //printf("erased particle, new size: %lu \n", particles.size());
             } 
 
+			glBegin(GL_LINE_STRIP);
 
             vel = fabs(current_body.velocity.x) + fabs(current_body.velocity.y);
 
@@ -344,27 +373,22 @@ glPointSize(1.2);
                 b=0;
             }
 
-            glBegin(GL_POINTS);
 
 		    //glColor4ub( current_body.color.r, current_body.color.b, current_body.color.g, 255);
-            /*glColor4ub( r, g, b, 255);
-		    for(int f=0; f < current_body.trail.path.size() ; f++)
+            glColor4ub( r, g, b, 255);
+		    for(int f=0; f < current_body.trail.path.size()-1 ; f++)
 		    {
 		        glVertex3f(  current_body.trail.path[f].x,  current_body.trail.path[f].y, 0 );
-            }*/
-            glColor4ub( r, g, b, 255);
-		    glVertex3f(  current_body.position.x, current_body.position.y, 0 ); 
+            }
+		        
 		    
 		    glEnd();
 
+        
+
+
     	}
 
-        glBegin(GL_POINTS);
-        for(j=0; j<bodies.size(); j++){
-             glColor4ub( 255, 0, 0, 255);
-             glVertex3f( bodies[j].position.x,   bodies[j].position.y, 0 );
-        }
-        glEnd();
     	// DRAW THAT SHIT YO
 
     	window.display();

@@ -31,7 +31,10 @@ t_VECT Body::attraction(Body other, int constant, int debug){
 	t_VECT dist = this->distance(other);
 	t_VECT force;
 
-
+	if(dist.d <= 80)
+	{
+		dist.d = 80;
+	}
 
 	force.d = constant * position.d * other.position.d / ( pow( dist.d, 2 ) );
 	
