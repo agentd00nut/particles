@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 	// GL INIT
 
 	srand(time(NULL));
-    int width = 800, height = 800, depth = 200;
+    int width = 1200, height = 800, depth = 200;
 
     sf::Window window(sf::VideoMode(width, height), "OpenGL", sf::Style::Default, sf::ContextSettings(32));
 
@@ -83,26 +83,38 @@ int main(int argc, char** argv)
     t_COLOR thisshit(32,178,170, 255);
 	// GRAVITY INIT
 
-    float magnetism = 10;
-    int trail_length = 1;
-    float timestep = 3;
+    float magnetism = 1000;
+    int trail_length = 20; // 1000
+    float timestep = .6 ;
     
+
     int zoom=-700;
     
-    float speed_full=1;
+    float speed_full = 12; // for coloring.
+    int opacity_step = 16;
+
+/*    bodies.push_back( Body( 0, 0, 16,    0, 0 , 0,   blue, trail_length ));
+
+    for(int i =0; i < 500; i++)
+    {
+        particles.push_back( Body(  rand()%2001-1000+r_small(), rand()%2001-1000+r_small(), 1,  0, 0, 0,   green, trail_length ));
+    }
+*/   
 
 
-    bodies.push_back( Body( -100, 0, 2,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 100, 0,  2,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 0, 100,  8,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 0, -100, 8,  0, 0 , 0,   blue, trail_length ));
+
+    bodies.push_back( Body( -200, 0, 4,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 200, 0,  4,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 100,  4,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, -100, 4,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 0,   -2,  0, 0 , 0,   blue, trail_length ));
    
-    for(int i =0; i < 5000; i++)
+    for(int i =0; i < 8000; i++)
     {
         
         //particles.push_back( Body(  (rand()%501-250)+r_small(), rand()%11-5+r_small(), 1,   0,rand()%2-1+r_small(), 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%501-250)+r_small(), r_small(), 1,   0, 0, 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%501-250)+r_small(), -r_small(), 1,   0, 0, 0,   green, trail_length ));
+        particles.push_back( Body(  (rand()%1001-500)+r_small(), 0, 1,   0, r_small(), 0,   green, trail_length ));
+        particles.push_back( Body(  (rand()%1001-500)+r_small(), 0, 1,   0, -r_small(), 0,   green, trail_length ));
 
     }
 
@@ -312,7 +324,7 @@ glPointSize(1.2);
 
             particles[i] = current_body;
 
-            if(  current_body.velocity.x < -magnetism || current_body.velocity.y < -magnetism || current_body.velocity.x > magnetism || current_body.velocity.y > magnetism || ( current_body.position.x < -10000 || current_body.position.x > 10000 ) || ( current_body.position.y < -10000 || current_body.position.y > 10000 )){
+            /*if(  current_body.velocity.x < -magnetism || current_body.velocity.y < -magnetism || current_body.velocity.x > magnetism || current_body.velocity.y > magnetism || ( current_body.position.x < -10000 || current_body.position.x > 10000 ) || ( current_body.position.y < -10000 || current_body.position.y > 10000 )){
                 
                 particles.erase(particles.begin()+i);
                 i-=1;
@@ -320,7 +332,7 @@ glPointSize(1.2);
                 //particles.resize()
 
                 //printf("erased particle, new size: %lu \n", particles.size());
-            } 
+            }*/
 
 
             vel = fabs(current_body.velocity.x) + fabs(current_body.velocity.y);
@@ -344,28 +356,28 @@ glPointSize(1.2);
                 b=0;
             }
 
-            glBegin(GL_POINTS);
+            glBegin(GL_LINE_STRIP);
 
-		    //glColor4ub( current_body.color.r, current_body.color.b, current_body.color.g, 255);
-            /*glColor4ub( r, g, b, 255);
+            
 		    for(int f=0; f < current_body.trail.path.size() ; f++)
 		    {
+                glColor4ub( r, g, b, opacity_step);
 		        glVertex3f(  current_body.trail.path[f].x,  current_body.trail.path[f].y, 0 );
-            }*/
-            glColor4ub( r, g, b, 255);
-		    glVertex3f(  current_body.position.x, current_body.position.y, 0 ); 
+            }
+            //glColor4ub( r, g, b, 255);
+		    //glVertex3f(  current_body.position.x, current_body.position.y, 0 ); 
 		    
 		    glEnd();
 
     	}
 
-        glBegin(GL_POINTS);
+        /*glBegin(GL_POINTS);
         for(j=0; j<bodies.size(); j++){
              glColor4ub( 255, 0, 0, 255);
              glVertex3f( bodies[j].position.x,   bodies[j].position.y, 0 );
         }
         glEnd();
-    	// DRAW THAT SHIT YO
+    */
 
     	window.display();
 	    
