@@ -7,29 +7,33 @@ An exploration into particle graphics.
 
 http://www.giphy.com/gifs/26gs62MGkZfTwFMBO
 
+DONE
+====
+
+Change color based on particles speed. A bit sloppy but it works.
+Fixed particles "blasting off" when very close to sources of gravity.
+	Protip: 1 / ( < 1 ^ 2 ) ===  >1 !
+
+Added opacity to particle trails, acts as a "heat map".
+	Change `opacity_step` to 255, and `trail_length` to 2 if you like particles.
+
+If you really like JUST particles with no trails at all change `trail_length` to 1 and
+`GL_LINE_STRIP` to `GL_POINTS` for a speed boost.
+
 TODO
 ====
 
-Make particles change color on speed.
-Introduce drag... a pseudo "atmosphere" to slow particles down.
+Threading, I'd like to move all of the position update code into the body class So we can
+thread the update logic for each particle.  This would lead to inaccuracies (particle didn't update)
+and i'm curious how many threads you can make before shit blows up but it'd clean up the code anyways.
 
+Look into different ways to draw particle paths... I'm 95% sure I could restructure how the path
+is stored so that I could do something like `draw_function( THE WHOLE FLIPPIN PATH )` instead of
+iterating over each particles path and drawing each point one by one oh my god it's slow.
 
-CONTRIBUTE PLEASE
-=================
+CONTRIBUTE
+==========
 
-When particles get very close to the bodies that they are attracted to the math falls apart and all
-of a sudden particles get a force of 100, 300, 35000 applied to them...
+It'd be so neat if someone could change the panning code to actually pan correctly.
+Really if someone could point me to a good beginners tutorial on translating the camera, that'd be neat.
 
-I've tried ignoring attraction if the distance is below some threshold, deleting particles that move too quickly,
-trying a max force threshold, and a dynamic timestep that slows when particles are near gravity wells.
-
-None of them worked in an acceptable way.
-
-If you can look in `body.cpp` at the distance and attraction methods and make particles very close together not
-go insane that'd be amazeballs.
-
-< 25 distance things start getting speedy.
-< 5 distance things become outrageos (applied forces of >100 );
-< 1 distance things become broke dick ( 35,000 applied force );
-
- 
