@@ -87,12 +87,39 @@ void Body::add_velocity(t_VECT new_velocity){
 	return;
 }
 
-void Body::update(float timestep, float scale){
+void Body::add_velocity(float x, float y){
+	velocity.x += x;
+	velocity.y += y;
+	return;
+}
+
+void Body::update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism ){
+
+	int b_size = bodies.size();
+	float adjusted_mass = position.d * timestep;
+
+	float total_fx, total_fy;
+
+	for(int i=0; i < b_size; i++){
+
+	    t_VECT new_f = this->attraction(bodies[i] , magnetism, 0);
+		total_fx += new_f.x;
+		total_fy += new_f.y;
+	}
+
+	total_fx = total_fx / adjusted_mass;
+	total_fy = total_fy / adjusted_mass;    
+	this->add_velocity( total_fx, total_fy );
+
+
+
 	position.x += velocity.x * timestep;
 	position.y += velocity.y * timestep;
-	trail.add(position.x*scale, position.y*scale);
 
+	trail.add(position.x * scale, position.y * scale);
 }
+
+
 
 void Body::draw(){
 	glBegin(GL_LINE_STRIP);

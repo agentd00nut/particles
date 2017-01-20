@@ -88,7 +88,7 @@ int main(int argc, char** argv)
     int zoom=-700;
     
     float speed_full = 24; // for coloring.
-    int opacity_step = 16;
+    int opacity_step = 255;
 
 
     bodies.push_back( Body( -200, 0,   20,  0, 0 , 0,   blue, trail_length ));
@@ -262,29 +262,10 @@ int main(int argc, char** argv)
     	for(i=0; i<particles.size(); i++){
 
     		current_body = particles[i];
-    		total_fx = 0;
-    		total_fy = 0;
-    		new_v.x=0;
-    		new_v.y=0;
+
+            current_body.update(bodies, timestep, SCALE, magnetism);
             
-            
-            for(j=0; j<bodies.size(); j++){
-
-                new_f = current_body.attraction(bodies[j] , magnetism,debug);
-    			total_fx += new_f.x;
-    			total_fy += new_f.y;
-            }
-                
-            new_v.x += total_fx / current_body.position.d * timestep ;
-            new_v.y += total_fy / current_body.position.d * timestep ;    
-        
-    		current_body.add_velocity(new_v);
-    		current_body.update(timestep, SCALE);
-
-
-
             particles[i] = current_body;
-
           
 
             vel = fabs(current_body.velocity.x) + fabs(current_body.velocity.y);

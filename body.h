@@ -74,7 +74,9 @@ public:
 	void report();
 	//void prep_update(t_VECT position; t_VECT velocity) : new_position(position), new_velocity(velocity){}
 	void add_velocity(t_VECT new_velocity);
-	void update(float timestep, float scale);
+	void add_velocity(float x, float y);
+
+    void update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism);
 
 	void draw();
 };
