@@ -16,8 +16,8 @@ t_VECT Body::distance(Body other){
 
 	if( d == 0 )
 	{
-		d=1;
-		printf("WARNING: Distance between two bodies was 0, converting to .0001\n");
+		d=80;
+		//printf("WARNING: Distance between two bodies was 0, converting to .0001\n");
 	}
 
 	t_VECT dist(dx, dy, d);
@@ -31,7 +31,7 @@ t_VECT Body::attraction(Body other, int constant, int debug){
 	t_VECT dist = this->distance(other);
 	t_VECT force;
 
-	if(dist.d <= 80)
+	if(dist.d < 80)
 	{
 		dist.d = 80;
 	}
@@ -73,7 +73,7 @@ t_VECT Body::attraction(Body other, int constant, int debug){
 }
 
 void Body::report(){
-	printf("	POS: %g, %g\n", position.x, position.y);
+	printf("	POS: %g, %g \n", position.x, position.y);
 	printf("	MASS: %g\n", position.d);
 	printf("	VEL: %g, %g\n\n", velocity.x, velocity.y);
 	printf("	COLOR: %i, %i, %i, %i \n", color.r, color.b, color.g, color.o);
@@ -93,43 +93,88 @@ void Body::add_velocity(float x, float y){
 	return;
 }
 
-void Body::update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism ){
+void Body::update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism, float &speed_full, float &speed_steps, int &opacity_step ){
 
 	int b_size = bodies.size();
 	float adjusted_mass = position.d * timestep;
 
-	float total_fx, total_fy;
+	float total_fx =0;
+	float total_fy =0;
 
 	for(int i=0; i < b_size; i++){
 
 	    t_VECT new_f = this->attraction(bodies[i] , magnetism, 0);
 		total_fx += new_f.x;
 		total_fy += new_f.y;
+		
+		//printf("New X: %g New Y: %g\n", new_f.x, new_f.y);
 	}
-
+	
+	//printf("Total FX: %g Total FY: %g\n", total_fx, total_fy);
+	
 	total_fx = total_fx / adjusted_mass;
 	total_fy = total_fy / adjusted_mass;    
 	this->add_velocity( total_fx, total_fy );
-
-
+	
+	//printf("Velocity X: %g Velocity Y: %g\n", velocity.x, velocity.y);
 
 	position.x += velocity.x * timestep;
 	position.y += velocity.y * timestep;
 
-	trail.add(position.x * scale, position.y * scale);
+	this->update_color(speed_full, speed_steps, opacity_step);
+
+	trail.add(position.x * scale, position.y * scale, color.r, color.b, color.g, color.o);
+
+	//this->report();
 }
 
+void Body::update_color(float &speed_full, float &speed_steps, int &opacity_step)
+{
+    float vel = fabs(velocity.x) + fabs(velocity.y);
 
+
+    if( vel > speed_full ){ vel = speed_full; }
+    
+    float speed_color = vel * speed_steps;
+
+    //cout << "Speed color was: " << speed_color << "\n";
+
+    if( speed_color <= 255 ){
+        color.r=0;
+        color.g=0;
+        color.b=speed_color;
+    }
+    else if( speed_color >= 255 && speed_color <= 510){
+        color.r=0;
+        color.g=speed_color-255;
+        color.b=255-speed_color;
+    }else{
+        color.r=speed_color-510;
+        color.g=510-speed_color;
+        color.b=0;
+    }
+
+    color.o = opacity_step; // TODO: this should be moved so it's only set once when the body is made.
+
+    //cout << "R: " << color.r << "G: " << color.g << "B: "<<color.b << "\n";
+}
 
 void Body::draw(){
-	glBegin(GL_LINE_STRIP);
-    glColor4ub( color.r, color.b, color.g, color.o );
 
-    for(int i=0; i < trail.path.size()-1 ; i++)
-    {
-        
-        glVertex3f(  trail.path[i].x,  trail.path[i].y, 0 );
-        
+	glBegin(GL_LINE_STRIP);
+//    glColor4ub( color.r, color.g, color.b, color.o );
+    int path_size = trail.path.size();
+
+    for(int i=0; i < path_size ; i++)
+    {   
+
+
+
+
+
+    	glColor4ub(  trail.color_path[i].r, trail.color_path[i].g, trail.color_path[i].b, trail.color_path[i].o );
+        glVertex3f(  trail.path[i].x,  trail.path[i].y, 0 );   
     }
+
     glEnd();
 }

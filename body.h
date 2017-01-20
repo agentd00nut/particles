@@ -31,6 +31,7 @@ typedef struct t_COLOR {
 typedef struct t_TRAIL {
 
 	vector<t_VECT> path;
+    vector<t_COLOR> color_path;
 	int limit;
 	int n;
 
@@ -39,12 +40,14 @@ typedef struct t_TRAIL {
 	t_TRAIL(int limit) : path(), limit(limit), n(0){}
 
 
-	void add(float x, float y){
+	void add(float x, float y, float r, float b, float g, float o){
 
 		this->path.push_back( t_VECT( x, y ) );
+        this->color_path.push_back( t_COLOR( r, b, g, o ) );
 
 		if(n > limit){
 			this->path.erase( path.begin() );
+            this->color_path.erase( color_path.begin() );
 		}else
 		{
 			n++;
@@ -76,7 +79,9 @@ public:
 	void add_velocity(t_VECT new_velocity);
 	void add_velocity(float x, float y);
 
-    void update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism);
+    void update_color(float &speed_full, float &speed_steps,  int &opacity_step);
+
+    void update(vector<Body> &bodies, float &timestep, float &scale, float &magnetism, float &speed_full, float &speed_steps,  int &opacity_step);
 
 	void draw();
 };

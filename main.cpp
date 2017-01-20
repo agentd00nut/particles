@@ -81,29 +81,26 @@ int main(int argc, char** argv)
 
     // GRAVITY INIT
 
-    float magnetism = 1000;
-    int trail_length = 2; // 1000
-    float timestep  = .6;
+    float magnetism = 100;
+    int trail_length = 10000; // 1000
+    float timestep  = 1;
     
     int zoom=-700;
     
-    float speed_full = 24; // for coloring.
-    int opacity_step = 255;
+    float speed_full = 20; // for coloring.
+    int opacity_step = 2;
 
 
-    bodies.push_back( Body( -200, 0,   20,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 200, 0,   20,  0, 0 , 0,   blue, trail_length ));
-    bodies.push_back( Body( 0, 0,   -10,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( -200, 0, 100,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 200, 0,  100,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, -200, 100,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 200,  100,  0, 0 , 0,   blue, trail_length ));
+    bodies.push_back( Body( 0, 0,   -20,  0, 0 , 0,   blue, trail_length ));
 
-
-   
-    for(int i =0; i < 4000; i++)
+    for(int i =0; i < 200; i++)
     {
-        
-        particles.push_back( Body(  (rand()%3001-1500)+r_small(), (rand()%401-200)+r_small()+400, 1,    2, -2, 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%3001-1500)+r_small(), (rand()%401-200)+r_small()+400, 1,    -2, -2, 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%3001-1500)+r_small(), (rand()%401-200)+r_small()-400, 1,    2, 2, 0,   green, trail_length ));
-        particles.push_back( Body(  (rand()%3001-1500)+r_small(), (rand()%401-200)+r_small()-400, 1,    -2, 2, 0,   green, trail_length ));
+        particles.push_back( Body(  rand()%400-200, rand()%51-25, 1,    -10, r_small(), 0,  green, trail_length ));
+        particles.push_back( Body(  rand()%401-200, rand()%51-25, 1,    10, -r_small(), 0,  green, trail_length ));
 
     }
 
@@ -255,59 +252,20 @@ int main(int argc, char** argv)
 
         glTranslatef(xM-lxM, yM-lyM, zoom);
 
-    	// EXERT FORCE ON EVERY BODY AND UPDATE POSITIONS.
-
-
         
-    	for(i=0; i<particles.size(); i++){
-
-    		current_body = particles[i];
-
-            current_body.update(bodies, timestep, SCALE, magnetism);
+    	for(i=0; i<particles.size(); i++){     
             
-            particles[i] = current_body;
-          
-
-            vel = fabs(current_body.velocity.x) + fabs(current_body.velocity.y);
-
-
-            if( vel > speed_full ){ vel = speed_full; }
-            speed_color = vel * speed_steps;
-
-            if( speed_color <= 255 ){
-                r=0;
-                g=0;
-                b=speed_color;
-            }
-            else if( speed_color > 255 && speed_color <= 510){
-                r=0;
-                g=speed_color-255;
-                b=255-speed_color;
-            }else{
-                r=speed_color-510;
-                g=510-speed_color;
-                b=0;
-            }
-
-            glBegin(GL_LINE_STRIP);
-            glColor4ub( r, g, b, opacity_step);
-		    for(int f=0; f < current_body.trail.path.size() ; f++)
-		    {
-		        glVertex3f(  current_body.trail.path[f].x,  current_body.trail.path[f].y, 0 );
-            }
-          
-		    
-		    glEnd();
-
+           	particles[i].update(bodies, timestep, SCALE, magnetism, speed_full, speed_steps, opacity_step);
+            particles[i].draw();
     	}
 
-        /*glBegin(GL_POINTS);
-        for(j=0; j<bodies.size(); j++){
-             glColor4ub( 255, 0, 0, 255);
-             glVertex3f( bodies[j].position.x,   bodies[j].position.y, 0 );
-        }
-        glEnd();
-        */
+        //glBegin(GL_POINTS);
+        //for(j=0; j<bodies.size(); j++){
+        //     glColor4ub( 255, 0, 0, 255);
+        //     glVertex3f( bodies[j].position.x,   bodies[j].position.y, 0 );
+        //}
+        //glEnd();
+        
 
     	window.display();
 	    
